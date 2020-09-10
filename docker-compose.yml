@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres:10.6-alpine
+    container_name: kafka_dotnet_postgres
+    ports:
+      - "5499:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
