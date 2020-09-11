@@ -10,12 +10,9 @@ namespace Services.Customer.Handlers
     public class UserCreatedHandler : IKafkaHandler<string, User>
     {
         private readonly CustomerDBContext _dbContext;
-        private readonly ILogger<UserCreatedHandler> _logger;
 
-        public UserCreatedHandler(CustomerDBContext dbContext,
-                                  ILogger<UserCreatedHandler> logger)
+        public UserCreatedHandler(CustomerDBContext dbContext)
         {
-            _logger = logger;
             _dbContext = dbContext;
         }
 
