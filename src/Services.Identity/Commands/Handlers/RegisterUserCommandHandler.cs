@@ -11,21 +11,20 @@ namespace Services.Identity.Commands.Handlers
     public class RegisterUserCommandHandler : AsyncRequestHandler<RegisterUserCommand>
     {
         private readonly IdentityDBContext _dbContext;
-        // private readonly IMessagePublisher _messagePublisher;
+        private readonly IKafkaMessageBus<string, User> _bus;
 
-        public RegisterUserCommandHandler(IdentityDBContext dbContext
-        // , IMessagePublisher messagePublisher
-        )
+        public RegisterUserCommandHandler(IdentityDBContext dbContext, IKafkaMessageBus<string, User> bus)
         {
-            // _messagePublisher = messagePublisher;
+            _bus = bus;
             _dbContext = dbContext;
         }
+
         protected override async Task Handle(RegisterUserCommand command, CancellationToken cancellationToken)
         {
             if (await _dbContext.Users.AsNoTracking().AnyAsync(s => s.Email == command.Email))
                 throw new ApplicationException("Email is already exist.");
 
-            _dbContext.Users.Add(new User
+            var user = new User
             {
                 Id = command.Id,
                 Password = command.Password,
@@ -33,14 +32,13 @@ namespace Services.Identity.Commands.Handlers
                 FirstName = command.FirstName,
                 LastName = command.LastName,
                 Address = command.Address
-            });
+            };
+
+            _dbContext.Users.Add(user);
 
             await _dbContext.SaveChangesAsync();
 
-            // await _messagePublisher.Publish();
-
-            // new UserCreated(command.Id, command.Email, command.FirstName,
-            //      command.LastName), null
+            await _bus.PublishAsync(command.Email, user);
         }
     }
 }

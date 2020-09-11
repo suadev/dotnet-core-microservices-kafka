@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Services.Identity.Commands.Handlers;
 // using Services.Identity.Commands.Handlers;
 using Services.Identity.Data;
+using Shared.Kafka;
 
 namespace Services.Identity
 {
@@ -37,6 +38,14 @@ namespace Services.Identity
             services.AddMediatR(typeof(RegisterUserCommandHandler).GetTypeInfo().Assembly);
 
             services.AddControllers();
+
+            services.AddMessageBus();
+
+            services.AddKafkaProducer<string, User>(p =>
+            {
+                p.Topic = "users";
+                p.BootstrapServers = "localhost:9092";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
