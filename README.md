@@ -16,13 +16,11 @@ Asp dot Net Core microservices that communicate asynchronous through Kafka messa
 
 ## How Can I Test?
 
-* Create a user in the identity service with the following request. 
+* Create a user in the identity service with the following json. 
 
     Endpoint: http://localhost:5001/api/sign-up 
 
 ```json
-Body:
-
 {
 	"FirstName" : "Suat",
 	"LastName" : "Köse",
@@ -34,7 +32,11 @@ Body:
 
 * Check Identity and  ```Customer``` databases to make sure user and customer are created properly.
 
+<img src = "https://github.com/suadev/dotnet-core-microservices-kafka/blob/master/img/customer_db.png" />
 
+<img src = "https://github.com/suadev/dotnet-core-microservices-kafka/blob/master/img/identity_db.png" />
 
 * Check KafDrop to see messages on the ```users``` topic.
+
+<img src = "https://github.com/suadev/dotnet-core-microservices-kafka/blob/master/img/kafdrop.JPG" />
 
