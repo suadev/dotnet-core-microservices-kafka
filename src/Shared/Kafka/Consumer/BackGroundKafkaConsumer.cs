@@ -21,42 +21,32 @@ namespace Shared.Kafka.Consumer
             _config = config.Value;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 _handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<TK, TV>>();
 
-                return Task.Factory.StartNew(
-                    () => Execute(stoppingToken),
-                    stoppingToken,
-                    TaskCreationOptions.LongRunning,
-                    TaskScheduler.Current)
-                .ContinueWith(async p => { await Execute(stoppingToken); }, TaskContinuationOptions.OnlyOnFaulted);
-            }
-        }
+                var builder = new ConsumerBuilder<TK, TV>(_config).SetValueDeserializer(new KafkaDeserializer<TV>());
 
-        public async Task Execute(CancellationToken stoppingToken)
-        {
-            var builder = new ConsumerBuilder<TK, TV>(_config).SetValueDeserializer(new KafkaDeserializer<TV>());
-
-            using (IConsumer<TK, TV> consumer = builder.Build())
-            {
-                if (_config.Active)
+                using (IConsumer<TK, TV> consumer = builder.Build())
                 {
-                    consumer.Subscribe(_config.Topic);
-
-                    while (!stoppingToken.IsCancellationRequested)
+                    if (_config.Active)
                     {
-                        var result = consumer.Consume(TimeSpan.FromMilliseconds(1000));
+                        consumer.Subscribe(_config.Topic);
 
-                        if (result != null)
+                        while (!stoppingToken.IsCancellationRequested)
                         {
-                            await _handler.HandleAsync(result.Message.Key, result.Message.Value);
+                            var result = consumer.Consume(TimeSpan.FromMilliseconds(1000));
 
-                            consumer.Commit(result);
+                            if (result != null)
+                            {
+                                await _handler.HandleAsync(result.Message.Key, result.Message.Value);
 
-                            consumer.StoreOffset(result);
+                                consumer.Commit(result);
+
+                                consumer.StoreOffset(result);
+                            }
                         }
                     }
                 }
