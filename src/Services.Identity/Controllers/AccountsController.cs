@@ -13,11 +13,9 @@ namespace Services.Identity.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IdentityDBContext _dbContext;
 
-        public AccountsController(IMediator mediator, IdentityDBContext dbContext)
+        public AccountsController(IMediator mediator)
         {
-            _dbContext = dbContext;
             _mediator = mediator;
         }
 

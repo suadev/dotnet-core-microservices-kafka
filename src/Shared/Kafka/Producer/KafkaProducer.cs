@@ -16,19 +16,14 @@ namespace Shared.Kafka.Producer
             _producer = producer;
         }
 
+        public async Task ProduceAsync(Tk key, Tv value)
+        {
+            await _producer.ProduceAsync(_topic, new Message<Tk, Tv> { Key = key, Value = value });
+        }
+
         public void Dispose()
         {
             _producer.Dispose();
-        }
-
-        public async Task ProduceAsync(Tk key, Tv value)
-        {
-            await _producer.ProduceAsync(GetTopic(key, value), new Message<Tk, Tv> { Key = key, Value = value });
-        }
-
-        public virtual string GetTopic(Tk key, Tv value)
-        {
-            return _topic;
         }
     }
 }

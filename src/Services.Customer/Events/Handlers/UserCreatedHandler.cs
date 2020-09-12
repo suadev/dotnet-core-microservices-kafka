@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Services.Customer.Data;
-using Services.Customer.Events;
 using Services.Customer.Messages;
 using Shared.Kafka.Consumer;
 

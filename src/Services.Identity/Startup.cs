@@ -1,20 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Services.Identity.Commands.Handlers;
-// using Services.Identity.Commands.Handlers;
 using Services.Identity.Data;
 using Shared.Kafka;
 
@@ -39,7 +31,7 @@ namespace Services.Identity
 
             services.AddControllers();
 
-            services.AddMessageBus();
+            services.AddKafkaMessageBus();
 
             services.AddKafkaProducer<string, User>(p =>
             {

@@ -11,16 +11,14 @@ namespace Shared.Kafka
 {
     public static class RegisterServiceExtensions
     {
-        public static IServiceCollection AddMessageBus(this IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton(typeof(IKafkaMessageBus<,>), typeof(KafkaMessageBus<,>));
-            return serviceCollection;
-        }
+        public static IServiceCollection AddKafkaMessageBus(this IServiceCollection serviceCollection)
+            => serviceCollection.AddSingleton(typeof(IKafkaMessageBus<,>), typeof(KafkaMessageBus<,>));
 
         public static IServiceCollection AddKafkaConsumer<Tk, Tv, THandler>(this IServiceCollection services,
             Action<KafkaConsumerConfig<Tk, Tv>> configAction) where THandler : class, IKafkaHandler<Tk, Tv>
         {
             services.AddScoped<IKafkaHandler<Tk, Tv>, THandler>();
+
             services.AddHostedService<BackGroundKafkaConsumer<Tk, Tv>>();
 
             services.Configure(configAction);
@@ -32,18 +30,8 @@ namespace Shared.Kafka
             Action<KafkaProducerConfig<Tk, Tv>> configAction)
         {
             services.AddConfluentKafkaProducer<Tk, Tv>();
+
             services.AddSingleton<KafkaProducer<Tk, Tv>>();
-
-            services.Configure(configAction);
-
-            return services;
-        }
-
-        public static IServiceCollection AddKafkaProducer<Tk, Tv, THandler>(this IServiceCollection services,
-                Action<KafkaProducerConfig<Tk, Tv>> configAction) where THandler : KafkaProducer<Tk, Tv>
-        {
-            services.AddConfluentKafkaProducer<Tk, Tv>();
-            services.AddSingleton<KafkaProducer<Tk, Tv>, THandler>();
 
             services.Configure(configAction);
 
@@ -57,8 +45,7 @@ namespace Shared.Kafka
                 {
                     var config = sp.GetRequiredService<IOptions<KafkaProducerConfig<Tk, Tv>>>();
 
-                    ProducerBuilder<Tk, Tv> builder = new ProducerBuilder<Tk, Tv>(config.Value)
-                        .SetValueSerializer(new KafkaSerializer<Tv>());
+                    var builder = new ProducerBuilder<Tk, Tv>(config.Value).SetValueSerializer(new KafkaSerializer<Tv>());
 
                     return builder.Build();
                 });

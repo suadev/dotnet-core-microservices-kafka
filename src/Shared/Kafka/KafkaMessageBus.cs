@@ -3,11 +3,6 @@ using Shared.Kafka.Producer;
 
 namespace Shared.Kafka
 {
-    public interface IKafkaMessageBus<Tk, Tv>
-    {
-        Task PublishAsync(Tk key, Tv message);
-    }
-
     public class KafkaMessageBus<Tk, Tv> : IKafkaMessageBus<Tk, Tv>
     {
         public readonly KafkaProducer<Tk, Tv> _producer;

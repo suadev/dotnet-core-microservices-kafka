@@ -36,7 +36,7 @@ Asp dot Net Core microservices that communicate asynchronous through Kafka messa
 
 <img src = "https://github.com/suadev/dotnet-core-microservices-kafka/blob/master/img/identity_db.png" />
 
-* Check KafDrop to see messages on the ```users``` topic.
+* Check KafDrop (http://localhost:9000) to see messages on the ```users``` topic.
 
 <img src = "https://github.com/suadev/dotnet-core-microservices-kafka/blob/master/img/kafdrop.JPG" />
 

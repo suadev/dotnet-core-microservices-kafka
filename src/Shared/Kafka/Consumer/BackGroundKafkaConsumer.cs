@@ -31,22 +31,19 @@ namespace Shared.Kafka.Consumer
 
                 using (IConsumer<TK, TV> consumer = builder.Build())
                 {
-                    if (_config.Active)
+                    consumer.Subscribe(_config.Topic);
+
+                    while (!stoppingToken.IsCancellationRequested)
                     {
-                        consumer.Subscribe(_config.Topic);
+                        var result = consumer.Consume(TimeSpan.FromMilliseconds(1000));
 
-                        while (!stoppingToken.IsCancellationRequested)
+                        if (result != null)
                         {
-                            var result = consumer.Consume(TimeSpan.FromMilliseconds(1000));
+                            await _handler.HandleAsync(result.Message.Key, result.Message.Value);
 
-                            if (result != null)
-                            {
-                                await _handler.HandleAsync(result.Message.Key, result.Message.Value);
+                            consumer.Commit(result);
 
-                                consumer.Commit(result);
-
-                                consumer.StoreOffset(result);
-                            }
+                            consumer.StoreOffset(result);
                         }
                     }
                 }
