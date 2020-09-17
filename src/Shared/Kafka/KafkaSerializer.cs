@@ -10,16 +10,12 @@ namespace Shared.Kafka
         public byte[] Serialize(T data, SerializationContext context)
         {
             if (typeof(T) == typeof(Null))
-            {
                 return null;
-            }
 
             if (typeof(T) == typeof(Ignore))
-            {
                 throw new NotSupportedException("Not Supported.");
-            }
 
-            string json = JsonConvert.SerializeObject(data);
+            var json = JsonConvert.SerializeObject(data);
 
             return Encoding.UTF8.GetBytes(json);
         }
