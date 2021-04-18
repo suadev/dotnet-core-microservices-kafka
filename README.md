@@ -25,7 +25,7 @@ Asp dot Net Core microservices that communicate asynchronous through Kafka messa
 	"FirstName" : "Suat",
 	"LastName" : "Köse",
 	"Address" : "Üsküdar",
-	"Email" : "suadev@gmail.com",
+	"Email" : "email@gmail.com",
 	"Password" : "12345"
 }
 ```
